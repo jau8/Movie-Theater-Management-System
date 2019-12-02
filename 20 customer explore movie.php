@@ -1,75 +1,65 @@
 <?php include('server.php') ;
-	$state = isset($_POST["state"]) ? $_POST["state"] : '';
+
+    if (!isset($_SESSION['username'])) {
+        $_SESSION['msg'] = "You must log in first";
+        header('location: 1 login.php');
+    }
+
+    if (isset($_GET['logout'])) {
+        session_destroy();
+        unset($_SESSION['username']);
+        header("location: 1 login.php");
+    }
+
+    $username = $_SESSION['username'];
 ?>
 <!DOCTYPE html>
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
-	$(document).ready(function(e) {
-		var max_fields      = 5; //maximum input boxes allowed
-		var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
-		var add_button      = $(".add_field_button"); //Add button ID
-		var x = 1; //initlal text box count
-		$(add_button).click(function(e){ //on add input button click
-			e.preventDefault();
-			var clone = $(".faculty_row").eq(0).clone();
-			var removeLink = '<a href="#" cclass="remove_field">Remove</a>';
-			if(x < max_fields){ //max input box allowed
-				//$(".faculty_row").append(clone);
-				//$(".faculty_row").append(removeLink);
-				var bla = $('#parent_cred').val();
-				if((!$.isNumeric(bla)) || (bla.length != 16)) {
-					alert('Credit card is invalid.');
-				} else {
-					//alert('Credit card is. ' + $.type($bla) ' length');
-					x++ ;//text box increment
-					$(wrapper).append('<div><input type="text" name="mytext[]" value="' + bla + '" readonly ="readonly"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
-					$('#parent_cred').val('');
-				}
-			}
-		});
-
-		$(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-			e.preventDefault(); $(this).parent('div').remove(); x--;
-		})
-	});
+	var dateControl = document.querySelector('input[type="date"]');
+	dateControl.value = '2019-12-01';
+	//console.log(dateControl.value); // prints "2017-06-01"
+	//console.log(dateControl.valueAsNumber); // prints 1496275200000, a UNIX timestamp
 </script>
 <style>
-.input_fields_wrap {
-	margin: 10px 0px 10px 0px;
+.date label {
+  display: flex;
+  align-items: center;
 }
-.input_fields_wrap label {
-	display: block;
-	text-align: left;
-	margin: 3px;
+
+.date span::after {
+  padding-left: 5px;
 }
-.input_fields_wrap input {
-	height: 30px;
-	width: 50%;
+
+.date input {
+    display: inline;
+    height: 30px;
+	width: 30%;
 	padding: 5px 10px;
 	font-size: 16px;
 	border-radius: 5px;
 	border: 1px solid gray;
 }
-.add_field_button {
-	padding: 10px;
-	font-size: 15px;
-	color: white;
-	background: #5F9EA0;
-	border: none;
-	border-radius: 5px;
-	float: right;
-	margin: 0px 20px 0px 10px;
+
+.date input:invalid + span::after {
+  content: '✖';
 }
-.remove_field {
-	float: right;
-	margin: 18px 0px 0px 0px;
+
+.date input:valid+span::after {
+  content: '✓';
 }
+table {
+    text-align: center;
+}
+form {
+    align-content: center;
+}
+
 .select-css {
 	display: block;
 	font-size: 15px;
 	padding: 10px 10px;
-	width: 97%;
+	width: 95%;
 	box-sizing: border-box;
 	font-size: 16px;
 	margin: 10px 0px 10px 0px;
@@ -78,33 +68,35 @@
 }
 </style>
 <head>
-	<title>Manager-Customer Registration</title>
+	<title>Customer Explore Movie</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<div class="header">
-		<h2>Manager-Customer Registration</h2>
+		<h2>Explore Movie</h2>
 	</div>
+	<form method="post" action="20 customer explore movie.php">
 
-	<form method="post" action="6 manager customer registration.php">
+        <?php include('errors.php'); ?>
 
-		<?php include('errors.php'); ?>
-
-		<div class="input-group">
-			<label>First Name </label>
-			<input type="text" name="fname" value="<?php echo $fname; ?>">
-			<label>Last Name </label>
-			<input type="text" name="lname" value="<?php echo $lname; ?>">
+        <div class="input-group">
+			<label>Movie Name</label>
+			<select class="select-css" type="text" name="movie_name">
+				<?php
+				$comquery = "SELECT movName FROM movie";
+				$comsql = mysqli_query($db, $comquery);
+				$colsql = "movName" ;
+                echo "<option value = '$manuser'>ALL</option>";
+				while ($row = mysqli_fetch_array($comsql)) {
+					$manuser = $row["movName"] ; // value that get passed over to server
+					echo "<option value = '$manuser'>$row[$colsql]</option>";
+				}
+				 ?>
+			</select>
 		</div>
 
-		<div class="input-group">
-			<label>Username</label>
-			<input type="text" name="username" value="<?php echo $username; ?>">
-		</div>
-		<div class="input-group">
+        <div class="input-group">
 			<label>Company</label>
-		</div>
-		</div>
 			<select class="select-css" type="text" name="company">
 				<?php
 				$comquery = "SELECT * FROM company";
@@ -116,27 +108,16 @@
 				 ?>
 	  		</select>
 		</div>
-		<div class="input-group">
-			<label>Password</label>
-			<input type="password" name="password_1">
-		</div>
-		<div class="input-group">
-			<label>Confirm password</label>
-			<input type="password" name="password_2">
-		</div>
-        <div class="input-group">
-			<label>Street Address</label>
-			<input type="text" name="street" value="<?php echo $street; ?>">
-		</div>
+
         <div class="input-group">
 			<label>City</label>
 			<input type="text" name="city" value="<?php echo $city; ?>">
 		</div>
-		<div class="input-group">
+
+        <div class="input-group">
 			<label>State</label>
-		</div>
-			<select class="select-css" type="text" name="state" value="<?php echo isset($_POST["state"]) ? $_POST["state"] : ''; ?>">
-				<option value="AL" <?php if (isset($_POST['state']) && $_POST['state'] == 'AL') echo 'selected="selected"'; ?>>Alabama</option>
+			<select class="select-css" type="text" name="state" value="<?php echo $state; ?>">
+                <option value="AL" <?php if (isset($_POST['state']) && $_POST['state'] == 'AL') echo 'selected="selected"'; ?>>Alabama</option>
 				<option value="AK"<?php if (isset($_POST['state']) && $_POST['state'] == 'AK') echo 'selected="selected"'; ?>>Alaska</option>
 				<option value="AZ" <?php if (isset($_POST['state']) && $_POST['state'] == 'AZ') echo 'selected="selected"'; ?>>Arizona</option>
 				<option value="AR"<?php if (isset($_POST['state']) && $_POST['state'] == 'AR') echo 'selected="selected"'; ?>>Arkansas</option>
@@ -189,24 +170,116 @@
 				<option value="WY"<?php if (isset($_POST['state']) && $_POST['state'] == 'WY') echo 'selected="selected"'; ?>>Wyoming</option>
 		  </select>
 		</div>
-        <div class="input-group" type="text" value="<?php echo $username; ?>">
-			<label>Zipcode</label>
-			<input type="text" name="zipcode">
+
+        <div class="date" >
+			<label>Mininum Date</label>
+			<input name="min_date" type="date" value="<?php echo $min_date; ?>">
+            <label>Maximum Date</label>
+			<input name="max_date" type="date" value="<?php echo $max_date; ?>">
 		</div>
 
-		<div class="input_fields_wrap" id="cred_num">
+        <div class="input-group">
+              <button type="submit" class="btn" name="filter_movie">Filter</button>
+  		</div>
+
+          <?php
+          if (isset($_POST['filter_movie'])) { // filter button
+              $movie_name  = (!empty($_POST['movie_name'])) ? $movie_name = $_POST['movie_name']:$movie_name='';
+              $company  = (!empty($_POST['company'])) ? $company = $_POST['company']:$company='';
+              $state  = (!empty($_POST['state'])) ? $state = $_POST['state']:$state='';
+              $min_date  = (!empty($_POST['min_date'])) ? $min_date = $_POST['min_date']:$min_date='0000-01-01';
+              $max_date  = (!empty($_POST['max_date'])) ? $max_date = $_POST['max_date']:$max_date='9999-01-01';
+
+              $city = '';
+              $city  = (!empty($_POST['city'])) ? $city = $_POST['city']:$city='';
+
+              echo $movie_name;
+              echo $company;
+              echo $state;
+              echo $min_date;
+              echo $max_date;
+
+              if (count($errors) == 0) {
+
+                  echo '<table id="table" table align="center">';
+          		  echo '<tr class="header">';
+          		  echo '  <th style="width:20%;"><a>Movie</a></th>';
+                  echo '<th style="width:20%;"><a>Theater</a></th>';
+                  echo '  <th style="width:30%;"><a>Address</a></th>';
+          		  echo '  <th style="width:15%;"><a>Company</a></th>';
+                  echo '      <th style="width:20%;"><a>Play Date</a></th>';
+          		  echo '</tr>';
+
+                  $comquery = "call customer_filter_mov('$movie_name', '$company', '$city', '$state', '$min_date', '$max_date')";
+                  $comsql = mysqli_query($db, $comquery);
+
+
+                  $comquery = "SELECT * FROM cosfiltermovie";
+                  $comsql = mysqli_query($db, $comquery);
+                  while ($row = mysqli_fetch_assoc($comsql)) {
+                      echo "<tr id='" .$row["movName"]. " " .$row["movReleaseDate"]. "'>" ;
+                      echo "<td><input type='radio' name='radmov' id = 'radAnswer' value='" .$row["movName"]. "[" .$row["movReleaseDate"]. "[" .$row["thName"]. "[" .$row["comName"]. "[" .$row["movPlayDate"]. "'/>" .$row['movName']. "</td>" ;
+                      echo "
+                                <td>".$row["thName"]."</td>
+                                <td>".$row["thStreet"]."</td>
+                                <td>".$row["comName"]."</td>
+                                <td>".$row["movPlayDate"]."</td>
+                                <td>" ."<input type='hidden'" .$row["movReleaseDate"]."</td>
+                            </tr>";
+                  }
+                  echo "</table>";
+              }
+          }
+          ?>
+
+		</table>
+
+        <div class="input-group">
 			<label>Credit Card Number</label>
-		    <button class="add_field_button" name="add_cred">Add</button>
-		    <div class="faculty_row"><input type="text" name="mytext[]" id="parent_cred"></div>
+			<select class="select-css" type="text" name="this_cred_num">
+				<?php
+				$comquery = "SELECT * FROM creditcard WHERE username = '$username'";
+				$comsql = mysqli_query($db, $comquery);
+				$colsql = "creditCardNum" ;
+				while ($row = mysqli_fetch_array($comsql)) {
+					echo "<option>$row[$colsql]</option>";
+				}
+				 ?>
+	  		</select>
 		</div>
 
-		<div class="input-group">
-			<button type="submit" class="btn" name="reg_manager_customer">Register</button>
-			<button class="btn" name="reg_back">Back</button>
-		</div>
-		<p>
-			Already a member? <a href="1 login.php">Sign in</a>
+        <div class="input-group">
+              <button type="submit" class="btn" name="view_movie">View</button>
+
+              <?php
+              /*
+              if (isset($_POST['view_movie'])) {
+                  if(isset($_POST['radmov'])) {
+                      $movkey = $_POST['radmov'];
+                      list($thismovname, $thismovdate) = explode(' ', $movkey);
+                      $comquery = "SELECT * FROM cosfiltermovie WHERE movName = '$thismovname' AND movReleaseDate = '$thismovdate' ";
+                      $comsql = mysqli_query($db, $comquery);
+                      $thismovrow = mysqli_fetch_array($comsql) ;
+                      $thiscredit = isset($_POST['this_cred_num']) ? $thiscredit = $_POST['this_cred_num'] : $thiscredit = '' ;
+                      echo $thismovrow[0] ." " .$thismovrow[8] ." " .$thismovrow[1] ." " .$thismovrow[6] ." " .$thismovrow[7] ." " .$thiscredit;
+                  } else {
+                      array_push($errors, "You must select movie to view");
+                  }
+
+              }
+              */
+              ?>
+  		</div>
+
+        <p>
+			<button class = 'btn' name = "this-back-button">Back</button>
+            <?php
+
+             ?>
+
 		</p>
+
 	</form>
+
 </body>
 </html>

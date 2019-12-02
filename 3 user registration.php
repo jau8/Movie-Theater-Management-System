@@ -36,6 +36,7 @@
 		</div>
 		<div class="input-group">
 			<button type="submit" class="btn" name="reg_user">Register</button>
+			<button class="btn" name="reg_back">Back</button>
 		</div>
 		<p>
 			Already a member? <a href="1 login.php">Sign in</a>

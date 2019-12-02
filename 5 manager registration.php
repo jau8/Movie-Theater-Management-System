@@ -41,18 +41,19 @@
 		</div>
 		<div class="input-group">
 			<label>Company</label>
-		</div>
-		</div>
 			<select class="select-css" type="text" name="company">
 				<?php
 				$comquery = "SELECT * FROM company";
 				$comsql = mysqli_query($db, $comquery);
-				$colsql = "Name" ;
+				$colsql = "comName" ;
 				while ($row = mysqli_fetch_array($comsql)) {
 					echo "<option>$row[$colsql]</option>";
 				}
 				 ?>
 	  		</select>
+		</div>
+		</div>
+
 		</div>
 		<div class="input-group">
 			<label>Password</label>
@@ -72,7 +73,6 @@
 		</div>
 		<div class="input-group">
 			<label>State</label>
-		</div>
 			<select class="select-css" type="text" name="state" value="<?php echo $state; ?>">
 				<option value="AL">Alabama</option>
 				<option value="AK">Alaska</option>
@@ -127,12 +127,15 @@
 				<option value="WY">Wyoming</option>
 		  </select>
 		</div>
+
+		</div>
         <div class="input-group" type="text" value="<?php echo $username; ?>">
 			<label>Zipcode</label>
 			<input type="text" name="zipcode">
 		</div>
 		<div class="input-group">
 			<button type="submit" class="btn" name="reg_manager">Register</button>
+			<button class="btn" name="reg_back">Back</button>
 		</div>
 		<p>
 			Already a member? <a href="1 login.php">Sign in</a>

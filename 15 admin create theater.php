@@ -1,6 +1,54 @@
-<?php include('server.php') ?>
+<?php include('server.php') ;
+
+    if (!isset($_SESSION['username'])) {
+        $_SESSION['msg'] = "You must log in first";
+        header('location: 1 login.php');
+    }
+
+    if (isset($_GET['logout'])) {
+        session_destroy();
+        unset($_SESSION['username']);
+        header("location: 1 login.php");
+    }
+
+    $username = $_SESSION['username'];
+
+?>
 <!DOCTYPE html>
 <html>
+<script type="text/javascript">
+/*
+function get_managers() { // Call to ajax function
+    var company = $('#company').val();
+    var dataString = "company="+company;
+    alert(company) ;
+    $.ajax({
+        type: "POST",
+        url: "getmanagers.php", // Name of the php files
+        data: dataString,
+        success: function(html)
+        {
+            $("#manager").html(html);
+        }
+    });
+}
+
+
+$(document).ready(function(){
+    $("#company").change(function(){
+        var company = $("#company").val();
+        alert(company) ;
+        $.ajax({
+            type: "POST",
+            url: "getmanagers.php",
+            data: { company : company }
+        }).done(function(data){
+            $("#manager").html(data);
+        });
+    });
+});
+*/
+</script>
 <style>
 .select-css {
 	display: block;
@@ -32,11 +80,11 @@
 		</div>
 		<div class="input-group">
 			<label>Company</label>
-			<select class="select-css" type="text" name="company" value="<?php echo $company; ?>">
+			<select class="select-css" type="text" name="company" id="company" value="<?php echo $company; ?>" >
 				<?php
 				$comquery = "SELECT * FROM company";
 				$comsql = mysqli_query($db, $comquery);
-				$colsql = "Name" ;
+				$colsql = "comName" ;
 				while ($row = mysqli_fetch_array($comsql)) {
 					echo "<option>$row[$colsql]</option>";
 				}
@@ -119,11 +167,14 @@
 
 		<div class="input-group">
 			<label>Manager</label>
-			<select class="select-css" type="text" name="manager">
+			<select class="select-css" type="text" name="manager" id="manager">
 				<?php
-				$comquery = "SELECT username, firstname, lastname FROM atlanta_movies.user
-				WHERE username IN (SELECT username FROM atlanta_movies.manager)
-				AND username NOT IN (SELECT manager FROM atlanta_movies.theater)";
+                //$thiscomm = isset($_POST['company']) ? $thiscomm = $_POST['company'] : '' ;
+                //echo $_POST['company'] ; WHERE comName = '$thiscomm'
+
+				$comquery = "SELECT username, firstname, lastname FROM user
+				WHERE username IN (SELECT username FROM manager)
+				AND username NOT IN (SELECT manager FROM theater)";
 				$comsql = mysqli_query($db, $comquery);
 				$colsql = "firstname" ;
 				$colsql2 = "lastname" ;
@@ -132,17 +183,20 @@
 					echo "<option value = '$manuser'>$row[$colsql] $row[$colsql2]</option>";
 				}
 
+
+
 				 ?>
-			</select>
+             </select>
+
 		</div>
 
 		<div class="input-group">
-			<button type="submit" class="btn" name="create_theater">Create</button>
+			<button type="submit" class="btn" name="create_theater" >Create</button>
 		</div>
 
 
 		<p>
-			<a href="7 admin only functionality.php">Back</a>
+			<a href="14 admin manage company.php">Back</a>
 		</p>
 	</form>
 

@@ -1,18 +1,30 @@
-<?php include('server.php') ?>
+<?php include('server.php')
+?>
 <!DOCTYPE html>
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
 	$(document).ready(function(e) {
-		var max_fields      = 5; //maximum input boxes allowed
+		var max_fields      = 6; //maximum input boxes allowed
 		var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
 		var add_button      = $(".add_field_button"); //Add button ID
 		var x = 1; //initlal text box count
 		$(add_button).click(function(e){ //on add input button click
 			e.preventDefault();
+			var clone = $(".faculty_row").eq(0).clone();
+			var removeLink = '<a href="#" cclass="remove_field">Remove</a>';
 			if(x < max_fields){ //max input box allowed
-				x++ ;//text box increment
-				$(wrapper).append('<div><input type="text" name="mytext[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+				//$(".faculty_row").append(clone);
+				//$(".faculty_row").append(removeLink);
+				var bla = $('#parent_cred').val();
+				if((!$.isNumeric(bla)) || (bla.length != 16)) {
+					alert('Credit card is invalid.');
+				} else {
+					//alert('Credit card is. ' + $.type($bla) ' length');
+					x++ ;//text box increment
+					$(wrapper).append('<div><input type="text" name="mytext[]" value="' + bla + '" readonly ="readonly"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+					$('#parent_cred').val('');
+				}
 			}
 		});
 
@@ -91,12 +103,13 @@
 		<div class="input_fields_wrap" id="cred_num">
 			<label>Credit Card Number</label>
 		    <button class="add_field_button" name="add_cred">Add</button>
-		    <div><input type="text" name="mytext[]"></div>
+		    <div class="faculty_row"><input type="text" name="mytext[]" id="parent_cred"></div>
 		</div>
 
 
 		<div class="input-group">
 			<button type="submit" class="btn" name="reg_customer">Register</button>
+			<button class="btn" name="reg_back">Back</button>
 		</div>
 		<p>
 			Already a member? <a href="1 login.php">Sign in</a>

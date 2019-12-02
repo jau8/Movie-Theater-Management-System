@@ -9,6 +9,21 @@
 
     $asc_or_desc = $sort == 'ASC' ? 'desc' : 'asc';
 
+
+    if (!isset($_SESSION['username'])) {
+        $_SESSION['msg'] = "You must log in first";
+        header('location: 1 login.php');
+    }
+
+    if (isset($_GET['logout'])) {
+        session_destroy();
+        unset($_SESSION['username']);
+        header("location: 1 login.php");
+    }
+
+    $username = $_SESSION['username'];
+
+
  ?>
 <!DOCTYPE html>
 <html>
@@ -20,50 +35,6 @@ form {
     align-content: center;
 }
 </style>
-<script>
-function myFunction() {
-  // Declare variables
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("table");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-function myFunction2() {
-  // Declare variables
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("statusInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("table");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-}
-</script>
 <head>
 	<title>Admin Manage User</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
@@ -73,13 +44,15 @@ function myFunction2() {
 		<h2>Manage User</h2>
 	</div>
 	<form method="post" action="13 admin manage user.php">
-		<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for username">
+        <?php include('errors.php'); ?>
+        <label >Username</label >
+		<input type="text" id="manmyInput" name = "manusername">
         <label >Status</label >
         <select type="text" name="statusInput" value="<?php echo $statusInput; ?>">
-            <option type = "text" value="All">--ALL--</option>
-            <option type = "text" value="Pending">Pending</option>
-            <option type = "text" value="Declined">Declined</option>
-            <option type = "text" value="Approved">Approved</option>
+            <option type = "text" value="All" <?php if (isset($_POST['statusInput']) && $_POST['statusInput'] == 'All') echo 'selected="selected"'; ?>>--ALL--</option>
+            <option type = "text" value="Pending" <?php if (isset($_POST['statusInput']) && $_POST['statusInput'] == 'Pending') echo 'selected="selected"'; ?>>Pending</option>
+            <option type = "text" value="Declined" <?php if (isset($_POST['statusInput']) && $_POST['statusInput'] == 'Declined') echo 'selected="selected"'; ?>>Declined</option>
+            <option type = "text" value="Approved" <?php if (isset($_POST['statusInput']) && $_POST['statusInput'] == 'Approved') echo 'selected="selected"'; ?>>Approved</option>
         </select>
 
         <div class="input-group">
@@ -90,17 +63,21 @@ function myFunction2() {
 
 		<table id="table" table align="center">
 		  <tr class="header">
-		    <th style="width:20%;"><a href='?order=username&&sort=<?php echo $asc_or_desc; ?>'>Username</a></th>
-            <th style="width:20%;"><a href='?order=userType&&sort=<?php echo $asc_or_desc; ?>'>Status</a></th>
-            <th style="width:20%;"><a href='?order=creditCardCount&&sort=<?php echo $asc_or_desc; ?>'>Credit Card Count</a></th>
-		    <th style="width:20%;"><a href='?order=status&&sort=<?php echo $asc_or_desc; ?>'>User Type</a></th>
+		    <th style="width:20%;"><a href='?order=username&&sort=<?php echo $asc_or_desc; ?>&&stas=<?php echo $statusInput; ?>'>Username</a></th>
+            <th style="width:20%;"><a href='?order=status&&sort=<?php echo $asc_or_desc; ?>&&stas=<?php echo $statusInput; ?>'>Status</a></th>
+            <th style="width:20%;"><a href='?order=creditCardCount&&sort=<?php echo $asc_or_desc; ?>&&stas=<?php echo $statusInput; ?>'>Credit Card Count</a></th>
+		    <th style="width:20%;"><a href='?order=userType&&sort=<?php echo $asc_or_desc; ?>&&stas=<?php echo $statusInput; ?>'>User Type</a></th>
 		  </tr>
 
           <?php
-          $statusInput = $_POST['statusInput'];
           // filter users by type
           if (isset($_POST['filter_user'])) { // filter button
-              $comquery = "call atlanta_movies.admin_filter_user('', '$statusInput', '', '')";
+              $statusInput = isset($_POST['statusInput'])? $statusInput=$_POST['statusInput']:$statusInput='ALL';
+              $_SESSION['thisstatinput'] = $statusInput;
+              $manuser = isset($_POST['manusername'])? $manuser=$_POST['manusername']:$manuser='';
+              $_SESSION['thismanuser'] = $manuser;
+
+              $comquery = "call admin_filter_user('$manuser', '$statusInput', '', '')";
               $comsql = mysqli_query($db, $comquery);
 
               $comquery = "SELECT * FROM adfilteruser ORDER BY $order $sort";
@@ -109,7 +86,7 @@ function myFunction2() {
 
                   $thisuser = $row["username"] ;
                   echo "<tr>" ;
-                  echo "<td><input type='radio' name='radAnswer' id = 'radAnswer' value='$thisuser'/>" .$row['username']. "</td>" ;
+                  echo "<td><input type='radio' name='radAnswer' id = 'radAnswer' value='" .$row["username"]. "'/>" .$row['username']. "</td>" ;
                   echo "
                             <td>".$row["status"]."</td>
                             <td>".$row["creditCardCount"]."</td>
@@ -117,8 +94,38 @@ function myFunction2() {
                         </tr>";
               }
               echo "</table>";
-          }
-          echo $_POST['radAnswer'];
+         } else {
+             if (!isset($_SESSION['thisstatinput'])) {
+                 $statusInput = 'ALL';
+             } else {
+                 $statusInput = $_SESSION['thisstatinput'] ;
+             }
+             if (!isset($_SESSION['thismanuser'])) {
+                 $manuser = '';
+             } else {
+                 $manuser = $_SESSION['thismanuser'] ;
+             }
+             $comquery = "call admin_filter_user('$manuser', '$statusInput', '', '')";
+             $comsql = mysqli_query($db, $comquery);
+
+             $comquery = "SELECT * FROM adfilteruser ORDER BY $order $sort";
+             $comsql = mysqli_query($db, $comquery);
+             while ($row = mysqli_fetch_assoc($comsql)) {
+
+                 $thisuser = $row["username"] ;
+                 echo "<tr>" ;
+                 echo "<td><input type='radio' name='radAnswer' id = 'radAnswer' value='" .$row["username"]. "'/>" .$row['username']. "</td>" ;
+                 echo "
+                           <td>".$row["status"]."</td>
+                           <td>".$row["creditCardCount"]."</td>
+                           <td>".$row["userType"]."</td>
+                       </tr>";
+             }
+             echo "</table>";
+         }
+
+
+
 
 
           ?>
@@ -126,7 +133,7 @@ function myFunction2() {
 		</table>
 
         <p>
-			<a href="7 admin only functionality.php">Back</a>
+            <button class = 'btn' name = "this-back-button">Back</button>
 		</p>
 
 	</form>
