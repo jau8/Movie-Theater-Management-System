@@ -18,3 +18,6 @@ variable names. My var names come from phase-2 create table, so some of
 them are
 not up to date yet.
 7) Go to http://localhost/Atlanta%20Movie/ to launch the web app
+
+Below are some of the screenshots of the application:
+![Test Image 8](https://raw.githubusercontent.com/tograh/testrepository/master/3DTest.png)
