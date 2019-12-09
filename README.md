@@ -21,3 +21,7 @@ not up to date yet.
 
 Below are some of the screenshots of the application:
 ![Image 1](https://github.com/jau8/atlantamoviewebapp/blob/master/Screenshots/Manage%20Company.PNG)
+![Image 2](https://github.com/jau8/atlantamoviewebapp/blob/master/Screenshots/Company%20Detail.PNG)
+![Image 3](https://github.com/jau8/atlantamoviewebapp/blob/master/Screenshots/Explore%20Movie.PNG)
+![Image 4](https://github.com/jau8/atlantamoviewebapp/blob/master/Screenshots/Schedule%20CMovie.PNG)
+![Image 5](https://github.com/jau8/atlantamoviewebapp/blob/master/Screenshots/User%20Registration%20Error%20Triggered.PNG)
