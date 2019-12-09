@@ -1,6 +1,5 @@
 <?php
 	session_start();
-
 	// variable declaration
 	$username = "";
 	$fname    = "";
@@ -149,6 +148,10 @@
 			array_push($errors, "Movie does not exist");
 		}
 
+		// MUST CHECK PRIMARY KEY HEREEEE(SELECT thName, comName FROM theater WHERE i_manUsername = theater.manager);
+
+
+
 		// CHECK AGAINNN
 		// check to see if manager works for a company
 		$username = $_SESSION['username'];
@@ -158,12 +161,34 @@
 		//echo $release_date;
 		if (mysqli_num_rows($results) == 0) {
 			array_push($errors, "Only manager of a company can schedule a movie");
+		} else {
+			$query = "SELECT thName, comName FROM theater WHERE manager = '$username'";
+			$results = mysqli_query($db, $query);
+			$row = mysqli_fetch_array($results) ;
+			$thetername = $row["thName"] ;
+			$companyname = $row["comName"] ;
+			//echo $thetername;
+			//echo $companyname;
+
+			$query = "SELECT * FROM movieplay WHERE thName = '$thetername' AND comName = '$companyname' AND movName = '$movie_name' AND movReleaseDate = '$release_date' AND movPlayDate = '$play_date' ";
+			$results = mysqli_query($db, $query);
+			if (mysqli_num_rows($results) > 0) {
+				array_push($errors, "Movie already scheduled");
+			}
+
 		}
+
+
+
+
 
 		// schedule movie if no errors
 		if (count($errors) == 0) {
 			$username = $_SESSION['username'];
 			// schedule movie query
+
+
+
 			$query = "call manager_schedule_mov('$username', '$movie_name', '$release_date', '$play_date')";
 			mysqli_query($db, $query);
 			$query = "SELECT  userType FROM user_type WHERE username='$username'";
@@ -300,12 +325,13 @@
 			header('location: 1 login.php');
 		}
 		$username = $_SESSION['username'];
-		echo $username ;
+		//echo $username ;
+		echo $_SESSION['username'];
 		$query = "SELECT userType FROM user_type WHERE username='$username'";
 		$thistype = "" ;
 		$thistype = mysqli_query($db, $query);
 		$thisrow = mysqli_fetch_array($thistype) ;
-		echo $thisrow[0];
+		//echo $thisrow[0];
 		if ($thisrow[0] == "CustomerManager") {
 			header('location: 10 manager customer functionality.php');
 
@@ -337,9 +363,9 @@
 				$_SESSION['msg'] = "You must log in first";
 				header('location: 1 login.php');
 			}
-			$thisusername = $_SESSION['username'] ;
+			$username = $_SESSION['username'] ;
 
-			$comquery = "call customer_view_history('$thisusername')";
+			$comquery = "call customer_view_history('$username')";
 			$comsql = mysqli_query($db, $comquery);
 			$comquery = "SELECT * FROM cosviewhistory WHERE movPlayDate='$thisplaydate' AND movName = '$thismovname' AND thName = '$thisthname' AND comName = '$thiscomname' AND creditCardNum = '$thiscredit'";
 			$comsql = mysqli_query($db, $comquery);
@@ -348,9 +374,9 @@
 				array_push($errors, "You already logged your view for this movie.");
 			}
 
-			$thisusername = $_SESSION['username'] ;
-			//echo $thisusername;
-			$comquery = "call customer_view_history('$thisusername')";
+			//$username = $_SESSION['username'] ;
+			//echo $username;
+			$comquery = "call customer_view_history('$username')";
 			$comsql = mysqli_query($db, $comquery);
 			$comquery = "SELECT * FROM cosviewhistory WHERE movPlayDate='$thisplaydate'";
 			$comsql = mysqli_query($db, $comquery);
@@ -362,9 +388,9 @@
 			if (count($errors) == 0) {
 				$query = "call  customer_view_mov('$thiscredit','$thismovname', '$thisredate', '$thisthname', '$thiscomname', '$thisplaydate')";
 				mysqli_query($db, $query);
-				//echo $thisusername;
+				//echo $username;
 
-                $query = "SELECT userType FROM user_type WHERE username='$thisusername'";
+                $query = "SELECT userType FROM user_type WHERE username='$username'";
                 $thistype = "" ;
                 $thistype = mysqli_query($db, $query);
                 $thisrow = mysqli_fetch_array($thistype) ;
@@ -427,7 +453,7 @@
 				header('location: 9 manager only functionality.php');
 			} else if ($thisrow[0] == "Customer") {
 				header('location: 11 customer functionality.php');
-			} else {
+			} else if ($thisrow[0] == "User") {
 				header('location: 12 user functionality.php');
 			}
 
@@ -785,7 +811,7 @@
 
 		if (count($errors) == 0) {
 			//echo $password;
-			//$password = md5($password);
+			$password = md5($password);
 			//echo $password;
 			$query = "call get_userType('$username')";
 			mysqli_query($db, $query);
