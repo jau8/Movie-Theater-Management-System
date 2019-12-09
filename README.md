@@ -1,4 +1,4 @@
-# atlantamoviewebapp
+# Movie Theater Management System Web Application
 
 ### How to run phase 4 web app
 1) Install XAMPP https://www.apachefriends.org/download.html
