@@ -115,7 +115,7 @@
                       echo "<tr>" ;
                       echo "
                                 <td>".$row["thName"]."</td>
-                                <td>".$row["thStreet"]."</td>
+                                <td>".$row["thStreet"].", ".$row["thCity"].", ".$row["thState"]."</td>
                                 <td>".$row["comName"]."</td>
                                 <td>".$row["visitDate"]."</td>
                             </tr>";

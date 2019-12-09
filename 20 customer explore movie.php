@@ -193,11 +193,11 @@ form {
               $city = '';
               $city  = (!empty($_POST['city'])) ? $city = $_POST['city']:$city='';
 
-              echo $movie_name;
-              echo $company;
-              echo $state;
-              echo $min_date;
-              echo $max_date;
+             // echo $movie_name;
+             // echo $company;
+              //echo $state;
+              //echo $min_date;
+              //echo $max_date;
 
               if (count($errors) == 0) {
 
@@ -221,7 +221,7 @@ form {
                       echo "<td><input type='radio' name='radmov' id = 'radAnswer' value='" .$row["movName"]. "[" .$row["movReleaseDate"]. "[" .$row["thName"]. "[" .$row["comName"]. "[" .$row["movPlayDate"]. "'/>" .$row['movName']. "</td>" ;
                       echo "
                                 <td>".$row["thName"]."</td>
-                                <td>".$row["thStreet"]."</td>
+                                <td>".$row["thStreet"].", ".$row["thCity"].", ".$row["thState"]."</td>
                                 <td>".$row["comName"]."</td>
                                 <td>".$row["movPlayDate"]."</td>
                                 <td>" ."<input type='hidden'" .$row["movReleaseDate"]."</td>
