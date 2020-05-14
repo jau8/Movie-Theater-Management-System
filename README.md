@@ -13,12 +13,11 @@ No known bugs
 ## Installation
 ### Run
 1) Install [XAMPP](https://www.apachefriends.org/download.html)
-Here is a helpful [guide](https://www.ionos.com/digitalguide/server/tools/xampp-tutorial-create-your
--own-local-test-server/):
-2) Copy and paste "Atlanta Movie" file into C:\xampp\htdocs
+Here is a helpful [guide](https://www.ionos.com/digitalguide/server/tools/xampp-tutorial-create-your-own-local-test-server/):
+2) Copy and paste `"Atlanta Movie"` file into `C:\xampp\htdocs`
 3) Start Apache and MySQL in the XAMPP Control Panel
 4) Go to http://localhost/phpmyadmin/ to launch phpMyAdmin
-5) Go to server.php in your Atlanta Movie file to change the name of the database.
+5) Go to `server.php` in your Atlanta Movie file to change the name of the database.
 6) Go to http://localhost/Atlanta%20Movie/ to launch the web app
 
 ### Download
