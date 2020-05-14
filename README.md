@@ -5,7 +5,7 @@ This project is a PHP-based web application that allows users to interact with a
 *November 20, 2019*
 
 ### New Features
-Added ability to sort company names by Names, #CityCovered, #Theaters, #Employees  
+Added ability to sort company names by `Names`, `#CityCovered`, `#Theaters`, `#Employees`  
 
 ### Bug Fixes
 No known bugs
